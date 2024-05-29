@@ -68,7 +68,7 @@ public class UserController {
      *
      * @return A message that can only be accessed by admins.
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     @RequestMapping(value="/adminping", method = RequestMethod.GET)
     public String adminPing(){
         return "Only Admins Can Read This";
