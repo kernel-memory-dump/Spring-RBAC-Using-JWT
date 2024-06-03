@@ -16,15 +16,23 @@ import jakarta.persistence.Table;
 
 import java.util.Set;
 
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+
 @Entity
 @Table(name = "users")
+@Document(indexName = "users")
+
 public class User {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @org.springframework.data.annotation.Id
     private long id;
 
     @Column
+    @Field(type = FieldType.Text)
     private String username;
 
     @Column
@@ -32,12 +40,15 @@ public class User {
     private String password;
 
     @Column
+    @Field(type = FieldType.Text)
     private String email;
 
     @Column
+    @Field(type = FieldType.Text)
     private String phone;
 
     @Column
+    @Field(type = FieldType.Text)
     private String name;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
