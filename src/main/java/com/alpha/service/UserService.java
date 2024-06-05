@@ -5,7 +5,11 @@ import com.alpha.model.UserDto;
 
 import java.util.List;
 
+
 public interface UserService {
+
+
+    public List<User> searchUsers(String searchText);
 
     // Saves a user
     User save(UserDto user);
