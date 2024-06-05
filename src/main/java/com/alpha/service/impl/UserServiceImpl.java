@@ -8,6 +8,7 @@ import com.alpha.dao.UserDao;
 import com.alpha.model.Role;
 import com.alpha.model.User;
 import com.alpha.model.UserDto;
+import com.alpha.search.UserElasticDao;
 import com.alpha.service.RoleService;
 import com.alpha.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Autowired
     private BCryptPasswordEncoder bcryptEncoder;
+
+    @Autowired
+    private UserElasticDao userElasticDao;
 
 
     // Load user by username
@@ -81,7 +85,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         }
 
         nUser.setRoles(roleSet);
-        return userDao.save(nUser);
+        userDao.save(nUser);
+        userElasticDao.save(nUser);
+        return nUser;
     }
 
     @Override
@@ -102,5 +108,10 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
         nUser.setRoles(roleSet);
         return userDao.save(nUser);
+    }
+
+
+    public List<User> searchUsers(String searchText) {
+        return userElasticDao.searchUsers(searchText);
     }
 }

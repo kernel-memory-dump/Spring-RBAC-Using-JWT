@@ -102,4 +102,10 @@ public class UserController {
     public User getAllList(@RequestParam String username){
         return userService.findOne(username);
     }
+
+   // @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/search")
+    public List<User> searchUsers(@RequestParam String searchText) {
+        return userService.searchUsers(searchText);
+    }
 }
