@@ -5,29 +5,75 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.2/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 </head>
+<!-- Extend this example with two input fields for username and password
+And a button authenticate, once authenticate is clicked, do a POST request 
+to endpoint /users/authenticate send username and password as JSON body
+In the response we will get a JWT token, the token should be stored in local storage 
+And also displayed in the page within a READONLY textarea
+-->
 <body>
+    <div>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username">
+    </div>
+    <div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password">
+    </div>
+    <button id="authenticate">Authenticate</button>
+    <div>
+        <label for="token">JWT Token:</label>
+        <textarea id="token" name="token" readonly></textarea>
+    </div>
 
-<script>
+    <script>
+        document.getElementById('authenticate').addEventListener('click', () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
 
-    window.addEventListener('load', (e) => {
-        const socket = new SockJS('/chat')
-        const stompClient = Stomp.over(socket)
-        stompClient.connect({}, (frame) => {
-
-            stompClient.subscribe('/topic/errors', (greeting) => {
-                console.warn('errors: ' + greeting.body)
-            });
-
-            stompClient.subscribe('/topic/greetings', (greeting) => {
-                console.log('greetings: ' + greeting.body)
-            });
-
-            stompClient.send('/app/chat', {}, JSON.stringify({name: 'Tammie'}))
-            stompClient.send('/app/chat', {}, JSON.stringify({name: 'josh'}))
+            fetch('/users/authenticate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.token) {
+                    localStorage.setItem('jwtToken', data.token);
+                    document.getElementById('token').value = data.token;
+                    initializeWebSocket(data.token);
+                } else {
+                    console.error('Authentication failed');
+                }
+            })
+            .catch(error => console.error('Error:', error));
         });
 
-    })
-    
-</script>
+        function initializeWebSocket(token) {
+            const sock = new SockJS('/chat');
+            const stompClient = Stomp.over(sock);
+
+            stompClient.connect({
+                Authorization: `Bearer ${token}`
+            }, (frame) => {
+                console.log('Connected:', frame);
+
+                stompClient.subscribe('/topic/errors', (message) => {
+                    console.warn('errors:', message.body);
+                });
+
+                stompClient.subscribe('/topic/greetings', (message) => {
+                    console.log('greetings:', message.body);
+                });
+
+                stompClient.send('/app/chat', {}, JSON.stringify({name: 'Tammie'}));
+                stompClient.send('/app/chat', {}, JSON.stringify({name: 'Josh'}));
+            }, (error) => {
+                console.error('Connection error:', error);
+            });
+        }
+    </script>
 </body>
 </html>
