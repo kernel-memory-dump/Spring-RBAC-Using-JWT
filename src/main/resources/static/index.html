@@ -28,6 +28,11 @@ And also displayed in the page within a READONLY textarea
 
     <script>
         document.getElementById('authenticate').addEventListener('click', () => {
+            if(localStorage.getItem("jwtToken") != null ){
+
+                initializeWebSocket(localStorage.getItem("jwtToken"));
+                return;
+            }
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
@@ -52,11 +57,11 @@ And also displayed in the page within a READONLY textarea
         });
 
         function initializeWebSocket(token) {
-            const sock = new SockJS('/chat');
+            const sock = new SockJS('/chat?token=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJQZXJhUGVyaWMiLCJyb2xlcyI6IlJPTEVfVVNFUiIsImlhdCI6MTcxODIwMzkxNSwiZXhwIjoxNzE4MjIxOTE1fQ.Iya9uk9TKwGnAHttInnwjGmU255w6zlodk0-raTg17Of4f3AKIH6xxRbS5SulNRndyNQO5GgXbS3DcH6J_XpYw');
             const stompClient = Stomp.over(sock);
 
             stompClient.connect({
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer${token}`
             }, (frame) => {
                 console.log('Connected:', frame);
 
