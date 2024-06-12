@@ -33,7 +33,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter, UnauthorizedEntryPoint unauthorizedEntryPoint) throws Exception {
         http.cors().and().csrf().disable()
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/users/authenticate", "/users/register").permitAll()
+                        .requestMatchers("/users/authenticate", "/users/register", "/index.html", "/chat**", "/chat/info**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedEntryPoint))
