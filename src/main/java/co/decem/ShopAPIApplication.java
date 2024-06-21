@@ -5,11 +5,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = "com.alpha.dao")
-public class AlphaApplication {
+@EnableJpaRepositories(basePackages = "co.decem.dao")
+public class ShopAPIApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AlphaApplication.class, args);
+		SpringApplication.run(ShopAPIApplication.class, args);
 	}
 
 }
